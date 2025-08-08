@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>PNLE Review Hub</title>
+<link rel="manifest" href="manifest.json"/>
+<link rel="stylesheet" href="assets/style.css"/>
+</head>
+<body>
+<header class="header"><img src="icons/icon-192.png" width="56" alt="PNLE"><div><h1>PNLE Review Hub</h1><div class="small">Focused review tools for nurses — Target: Nov 4, 2025</div></div>
+<nav class="nav"><a href="index.html">Home</a><a href="study.html">Study</a><a href="resources.html">Resources</a><a href="about.html">About</a></nav>
+</header>
+
+<main class="container">
+  <div class="grid">
+    <div>
+      <div class="card">
+        <h2>Welcome</h2>
+        <p>Use this site as your focused, fast review companion. Create a study plan, practice quizzes, and use flashcards.</p>
+        <div class="controls">
+          <a class="btn" href="study.html">Start Studying</a>
+          <a class="btn" href="resources.html">View Resources</a>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h3>Countdown</h3>
+        <div>Target exam date: <strong id="examDate">2025-11-04</strong></div>
+        <div>Days left: <strong id="daysLeft">--</strong></div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h3>Study Tips</h3>
+        <ul>
+          <li>Active recall (practice questions) beats passive reading.</li>
+          <li>Use spaced repetition for flashcards.</li>
+          <li>Practice dose calculations and prioritization questions under timed conditions.</li>
+        </ul>
+      </div>
+    </div>
+
+    <aside>
+      <div class="card">
+        <h3>Quick Links</h3>
+        <div class="small"><a href="study.html">Topics & Quizzes</a></div>
+        <div class="small"><a href="resources.html">Downloadable PDFs</a></div>
+        <div class="small"><a href="about.html">How to use this site</a></div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h3>Progress Tracker</h3>
+        <div class="small">Use the Study page to record quiz scores and track progress.</div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<footer>Made for focused PNLE review. Use official PRC materials as primary source.</footer>
+
+<script src="data.js"></script>
+<script>
+const exam = new Date(APP_DATA.meta.exam_date + 'T00:00:00+08:00');
+function daysLeft(){ const diff = Math.ceil((exam - new Date())/(1000*60*60*24)); return Math.max(0,diff); }
+document.getElementById('daysLeft').innerText = daysLeft();
+</script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Study - PNLE Review Hub</title>
+<link rel="stylesheet" href="assets/style.css"/></head>
+<body>
+<header class="header"><img src="icons/icon-192.png" width="56" alt="PNLE"><div><h1>PNLE Review Hub</h1><div class="small">Study tools</div></div>
+<nav class="nav"><a href="index.html">Home</a><a href="study.html">Study</a><a href="resources.html">Resources</a><a href="about.html">About</a></nav></header>
+
+<main class="container">
+  <div class="grid">
+    <div>
+      <div class="card">
+        <h3>Topics & Summaries</h3>
+        <div id="topics"></div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h3>Practice Quiz</h3>
+        <div style="display:flex;gap:8px;align-items:center"><label>Questions: <input id="numQ" type="number" min="1" max="50" value="10" style="width:70px"></label><button id="start" class="btn">Start</button><button id="timed" class="btn small">Timed Mode</button></div>
+        <div id="quizArea" style="margin-top:12px"></div>
+      </div>
+    </div>
+
+    <aside>
+      <div class="card">
+        <h3>Flashcards</h3>
+        <div id="flashcard" class="flashcard">Press Next</div>
+        <div class="controls" style="margin-top:8px"><button id="prev" class="secondary">Prev</button><button id="rev" class="secondary">Reveal</button><button id="next" class="btn">Next</button></div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h3>Tools</h3>
+        <div class="small"><button id="mn" class="secondary">Mnemonics</button> <button id="dose" class="secondary">Dose Calc</button></div>
+        <div id="toolOut" style="margin-top:8px"></div>
+      </div>
+    </aside>
+  </div>
+</main>
+<footer>Study smart. Use official guidelines for clinical practice.</footer>
+<script src="data.js"></script>
+<script>
+// populate topics
+const topicsDiv = document.getElementById('topics');
+for (const [t,s] of Object.entries(APP_DATA.topics)){
+  const el = document.createElement('div'); el.className='topic-item'; el.innerHTML=`<strong>${t}</strong><div style="margin-top:6px">${s}</div>`;
+  topicsDiv.appendChild(el);
+}
+// flashcards
+let fi=0, rev=false;
+function showFC(){ const f=APP_DATA.flashcards[fi % APP_DATA.flashcards.length]; document.getElementById('flashcard').innerText = rev ? f.a : f.q; }
+document.getElementById('next').addEventListener('click', ()=>{ fi++; rev=false; showFC(); });
+document.getElementById('prev').addEventListener('click', ()=>{ fi=Math.max(0,fi-1); rev=false; showFC(); });
+document.getElementById('rev').addEventListener('click', ()=>{ rev=true; showFC(); });
+showFC();
+// quiz
+let quizSet=[], cur=0, score=0, wrong=0, timer=null;
+function startQuiz(n,timed=false){
+  quizSet = APP_DATA.questions.slice().sort(()=>0.5-Math.random()).slice(0,n);
+  cur=0; score=0; wrong=0; showQ();
+  if (timed) startTimer(n*60);
+}
+document.getElementById('start').addEventListener('click', ()=>startQuiz(parseInt(document.getElementById('numQ').value||10), false));
+document.getElementById('timed').addEventListener('click', ()=>startQuiz(parseInt(document.getElementById('numQ').value||10), true));
+function showQ(){
+  const area = document.getElementById('quizArea');
+  if (cur>=quizSet.length){ area.innerHTML=`<div class="small">Complete! Score: ${score}/${quizSet.length}</div>`; return; }
+  const q = quizSet[cur];
+  area.innerHTML = `<div><strong>Q${cur+1}:</strong> ${q.q}</div><div style="margin-top:8px">${q.choices.map((c,i)=>`<div class="choice" data-i="${i}" style="padding:8px;border-radius:8px;border:1px solid #eee;margin-bottom:6px;cursor:pointer">${c}</div>`).join('')}</div><div class="small" style="margin-top:8px"><em>Topic: ${q.topic}</em></div>`;
+  area.querySelectorAll('.choice').forEach(el=> el.addEventListener('click', ()=>{
+    const sel = parseInt(el.getAttribute('data-i'));
+    if (sel === q.answer){ score++; el.style.background='#dff6ea'; } else { wrong++; el.style.background='#ffe6e6'; area.querySelectorAll('.choice')[q.answer].style.border='2px solid var(--accent)'; }
+    const ex = document.createElement('div'); ex.className='small'; ex.style.marginTop='8px'; ex.innerText = 'Explanation: ' + (q.explain || '—'); area.appendChild(ex);
+    cur++; setTimeout(showQ,800);
+  }));
+}
+// tools
+document.getElementById('mn').addEventListener('click', ()=> document.getElementById('toolOut').innerHTML='<strong>Mnemonics</strong><ul><li>ABCDE - Airway, Breathing, Circulation, Disability, Exposure</li></ul>');
+document.getElementById('dose').addEventListener('click', ()=> document.getElementById('toolOut').innerHTML='<strong>Dose calc</strong><div>Use formula: (Desired/Stock) x Volume</div>');
+// timer
+function startTimer(s){ if (timer) clearInterval(timer); let sec=s; const area = document.getElementById('quizArea'); const tEl = document.createElement('div'); tEl.className='small'; tEl.innerText='Time left: '+sec+'s'; area.prepend(tEl); timer=setInterval(()=>{ sec--; tEl.innerText='Time left: '+sec+'s'; if (sec<=0){ clearInterval(timer); alert('Time up'); } },1000); }
+</script>
+</body>
+</html>
