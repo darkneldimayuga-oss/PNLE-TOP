@@ -1,10 +1,10 @@
 {
-  "name": "PNLE Review Hub",
-  "short_name": "PNLEHub",
+  "name": "PNLE Review Portal - Shock Ultra",
+  "short_name": "PNLEShock",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#f7fcff",
-  "theme_color": "#2aa3c7",
+  "background_color": "#0f2230",
+  "theme_color": "#d4af37",
   "icons": [
     {
       "src": "icons/icon-192.png",
